@@ -9,8 +9,8 @@
     "debian_version_dir": "archive",
     "virtualbox_guest_additions_version": "5.0.0",
     "virtualbox_guest_additions_checksum": "7b61f523db7ba75aebc4c7bb0cae2da92674fa72299e4a006c5c67517f7d786b",
-    "aws_region": "eu-central-1",
-    "aws_source_ami": "ami-98043785"
+    "aws_region": "{{env `AWS_REGION`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI`}}"
   },
   "push": {
     "name": "{{user `atlas_username`}}/{{user `box_name`}}"
