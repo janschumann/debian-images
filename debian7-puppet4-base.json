@@ -196,6 +196,8 @@
       "artifact": "{{user `atlas_username`}}/{{user `box_name`}}",
       "artifact_type": "aws.ami",
       "metadata": {
+        "name": "{{user `box_name`}}",
+        "version": "{{user `box_version`}}",
         "created_at": "{{timestamp}}"
       }
     }]
