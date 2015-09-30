@@ -1,0 +1,202 @@
+{
+  "variables": {
+    "atlas_username": "janschumann",
+    "box_version": "1.0.0",
+    "box_name": "bdu-debian8-base",
+    "debian_version": "8.2.0",
+    "debian_iso_checksum": "762eb3dfc22f85faf659001ebf270b4f",
+    "debian_arch_dir": "amd64/iso-cd",
+    "debian_version_dir": "release/current",
+    "virtualbox_guest_additions_version": "5.0.0",
+    "virtualbox_guest_additions_checksum": "7b61f523db7ba75aebc4c7bb0cae2da92674fa72299e4a006c5c67517f7d786b",
+    "aws_region": "eu-central-1",
+    "aws_source_ami": "ami-98043785"
+  },
+  "push": {
+    "name": "{{user `atlas_username`}}/{{user `box_name`}}"
+  },
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/base.sh",
+        "scripts/virtualbox.sh",
+        "scripts/vmware.sh",
+        "scripts/vagrant.sh",
+        "scripts/puppet.sh",
+        "scripts/grub.sh",
+        "scripts/network.sh",
+        "scripts/systemd.sh",
+        "scripts/zerodisk.sh",
+        "scripts/cleanup.sh"
+      ],
+      "override": {
+        "virtualbox-iso": {
+          "execute_command": "echo 'vagrant'|sudo -S bash '{{.Path}}'"
+        },
+        "vmware-iso": {
+          "execute_command": "echo 'vagrant'|sudo -S bash '{{.Path}}'"
+        },
+        "amazon-ebs": {
+          "execute_command": "echo 'admin'|sudo -S bash '{{.Path}}'"
+        }
+      }
+    }
+  ],
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian8.cfg <wait>",
+        "debian-installer=en_US <wait>",
+        "auto <wait>",
+        "locale=en_US <wait>",
+        "kbd-chooser/method=us <wait>",
+        "netcfg/get_hostname={{ .Name }} <wait>",
+        "netcfg/get_domain=vagrantup.com <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "<enter><wait>"
+      ],
+      "headless": true,
+      "boot_wait": "10s",
+      "disk_size": 20480,
+      "guest_os_type": "Debian_64",
+      "http_directory": "http",
+      "iso_checksum": "{{user `debian_iso_checksum`}}",
+      "iso_checksum_type": "md5",
+      "iso_url": "http://cdimage.debian.org/cdimage/{{user `debian_version_dir`}}/{{user `debian_arch_dir`}}/debian-{{user `debian_version`}}-amd64-netinst.iso",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'vagrant'|sudo -S bash 'shutdown.sh'",
+      "guest_additions_url": "http://download.virtualbox.org/virtualbox/{{user `virtualbox_guest_additions_version`}}/VBoxGuestAdditions_{{user `virtualbox_guest_additions_version`}}.iso",
+      "guest_additions_sha256": "{{user `virtualbox_guest_additions_checksum`}}",
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "256"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "1"
+        ]
+      ]
+    },
+    {
+      "type": "vmware-iso",
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian8.cfg <wait>",
+        "debian-installer=en_US <wait>",
+        "auto <wait>",
+        "locale=en_US <wait>",
+        "kbd-chooser/method=us <wait>",
+        "netcfg/get_hostname={{ .Name }} <wait>",
+        "netcfg/get_domain=vagrantup.com <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "<enter><wait>"
+      ],
+      "headless": true,
+      "boot_wait": "10s",
+      "disk_size": 20480,
+      "http_directory": "http",
+      "iso_checksum": "{{user `debian_iso_checksum`}}",
+      "iso_checksum_type": "md5",
+      "iso_url": "http://cdimage.debian.org/cdimage/{{user `debian_version_dir`}}/{{user `debian_arch_dir`}}/debian-{{user `debian_version`}}-amd64-netinst.iso",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'vagrant'|sudo -S bash 'shutdown.sh'",
+      "tools_upload_flavor": "linux",
+      "vmx_data": {
+        "memsize": "256",
+        "numvcpus": "1",
+        "cpuid.coresPerSocket": "1"
+      }
+    },
+    {
+      "type": "amazon-ebs",
+      "region": "{{user `aws_region`}}",
+      "source_ami": "{{user `aws_source_ami`}}",
+      "instance_type": "t2.micro",
+      "ssh_username": "admin",
+      "ami_name": "{{user `box_name`}}-{{user `box_version`}}",
+      "ami_block_device_mappings": [
+        {
+          "device_name": "/dev/xvda",
+          "volume_size": "20",
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ],
+      "tags": {
+        "OS_Version": "Debian {{user `debian_version`}}"
+      }
+    }
+  ],
+  "post-processors": [
+    [{
+      "type": "vagrant",
+      "only": [
+        "virtualbox-iso",
+        "vmware-iso"
+      ],
+      "keep_input_artifact": false
+    },
+    {
+      "type": "atlas",
+      "only": [
+        "virtualbox-iso"
+      ],
+      "artifact": "{{user `atlas_username`}}/{{user `box_name`}}",
+      "artifact_type": "vagrant.box",
+      "metadata": {
+        "provider": "virtualbox",
+        "version": "{{user `box_version`}}",
+        "created_at": "{{timestamp}}"
+      }
+    },
+    {
+      "type": "atlas",
+      "only": [
+        "vmware-iso"
+      ],
+      "artifact": "{{user `atlas_username`}}/{{user `box_name`}}",
+      "artifact_type": "vagrant.box",
+      "metadata": {
+        "provider": "vmware_desktop",
+        "version": "{{user `box_version`}}",
+        "created_at": "{{timestamp}}"
+      }
+    },
+    {
+      "type": "atlas",
+      "only": [
+        "amazon-ebs"
+      ],
+      "artifact": "{{user `atlas_username`}}/{{user `box_name`}}",
+      "artifact_type": "aws.ami",
+      "metadata": {
+        "created_at": "{{timestamp}}"
+      }
+    }]
+  ]
+}
