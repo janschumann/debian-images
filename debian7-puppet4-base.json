@@ -1,7 +1,7 @@
 {
   "variables": {
     "atlas_username": "janschumann",
-    "box_version": "1.0.0",
+    "box_version": "1.0.1",
     "box_name": "debian7-puppet4-base",
     "debian_version": "7.9.0",
     "debian_iso_checksum": "774d1fc8c5364e63b22242c33a89c1a3",
