@@ -2,11 +2,11 @@
   "variables": {
     "atlas_username": "janschumann",
     "box_version": "1.0.0",
-    "box_name": "debian8-puppet4-base",
-    "debian_version": "8.2.0",
-    "debian_iso_checksum": "762eb3dfc22f85faf659001ebf270b4f",
+    "box_name": "debian7-puppet3-base",
+    "debian_version": "7.9.0",
+    "debian_iso_checksum": "774d1fc8c5364e63b22242c33a89c1a3",
     "debian_arch_dir": "amd64/iso-cd",
-    "debian_version_dir": "release/current",
+    "debian_version_dir": "archive",
     "virtualbox_guest_additions_version": "5.0.14",
     "virtualbox_guest_additions_checksum": "cec0df18671adfe62a34d3810543f76f76206b212b2b61791fe026214c77507c",
     "aws_region": "{{env `AWS_REGION`}}",
@@ -23,10 +23,9 @@
         "scripts/virtualbox.sh",
         "scripts/vmware.sh",
         "scripts/vagrant.sh",
-        "scripts/puppet4.sh",
+        "scripts/puppet3.sh",
         "scripts/grub.sh",
         "scripts/network.sh",
-        "scripts/systemd.sh",
         "scripts/zerodisk.sh",
         "scripts/cleanup.sh"
       ],
@@ -49,7 +48,7 @@
       "boot_command": [
         "<esc><wait>",
         "install <wait>",
-        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian8.cfg <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian7.cfg <wait>",
         "debian-installer=en_US <wait>",
         "auto <wait>",
         "locale=en_US <wait>",
@@ -70,7 +69,7 @@
       "http_directory": "http",
       "iso_checksum": "{{user `debian_iso_checksum`}}",
       "iso_checksum_type": "md5",
-      "iso_url": "http://cdimage.debian.org/cdimage/{{user `debian_version_dir`}}/{{user `debian_arch_dir`}}/debian-{{user `debian_version`}}-amd64-netinst.iso",
+      "iso_url": "http://cdimage.debian.org/cdimage/{{user `debian_version_dir`}}/{{user `debian_version`}}/{{user `debian_arch_dir`}}/debian-{{user `debian_version`}}-amd64-netinst.iso",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "ssh_port": 22,
@@ -99,7 +98,7 @@
       "boot_command": [
         "<esc><wait>",
         "install <wait>",
-        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian8.cfg <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian7.cfg <wait>",
         "debian-installer=en_US <wait>",
         "auto <wait>",
         "locale=en_US <wait>",
@@ -119,7 +118,7 @@
       "http_directory": "http",
       "iso_checksum": "{{user `debian_iso_checksum`}}",
       "iso_checksum_type": "md5",
-      "iso_url": "http://cdimage.debian.org/cdimage/{{user `debian_version_dir`}}/{{user `debian_arch_dir`}}/debian-{{user `debian_version`}}-amd64-netinst.iso",
+      "iso_url": "http://cdimage.debian.org/cdimage/{{user `debian_version_dir`}}/{{user `debian_version`}}/{{user `debian_arch_dir`}}/debian-{{user `debian_version`}}-amd64-netinst.iso",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "ssh_port": 22,
@@ -148,7 +147,9 @@
         }
       ],
       "tags": {
-        "OS_Version": "Debian {{user `debian_version`}}"
+        "OS_Version": "Debian {{user `debian_version`}}",
+        "Box Version": "AMI {{user `box_version`}}",
+        "Puppet": "Version 4"
       }
     }
   ],
@@ -195,6 +196,8 @@
       "artifact": "{{user `atlas_username`}}/{{user `box_name`}}",
       "artifact_type": "aws.ami",
       "metadata": {
+        "name": "{{user `box_name`}}",
+        "version": "{{user `box_version`}}",
         "created_at": "{{timestamp}}"
       }
     }]

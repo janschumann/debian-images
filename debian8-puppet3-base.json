@@ -2,7 +2,7 @@
   "variables": {
     "atlas_username": "janschumann",
     "box_version": "1.0.0",
-    "box_name": "debian8-puppet4-base",
+    "box_name": "debian8-puppet3-base",
     "debian_version": "8.2.0",
     "debian_iso_checksum": "762eb3dfc22f85faf659001ebf270b4f",
     "debian_arch_dir": "amd64/iso-cd",
@@ -23,7 +23,7 @@
         "scripts/virtualbox.sh",
         "scripts/vmware.sh",
         "scripts/vagrant.sh",
-        "scripts/puppet4.sh",
+        "scripts/puppet3.sh",
         "scripts/grub.sh",
         "scripts/network.sh",
         "scripts/systemd.sh",
