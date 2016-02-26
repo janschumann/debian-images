@@ -1,14 +1,14 @@
 {
   "variables": {
     "atlas_username": "janschumann",
-    "box_version": "1.0.1",
+    "box_version": "1.1.0",
     "box_name": "debian7-puppet4-base",
     "debian_version": "7.9.0",
     "debian_iso_checksum": "774d1fc8c5364e63b22242c33a89c1a3",
     "debian_arch_dir": "amd64/iso-cd",
     "debian_version_dir": "archive",
-    "virtualbox_guest_additions_version": "5.0.0",
-    "virtualbox_guest_additions_checksum": "7b61f523db7ba75aebc4c7bb0cae2da92674fa72299e4a006c5c67517f7d786b",
+    "virtualbox_guest_additions_version": "5.0.14",
+    "virtualbox_guest_additions_checksum": "cec0df18671adfe62a34d3810543f76f76206b212b2b61791fe026214c77507c",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_source_ami": "{{env `AWS_SOURCE_AMI`}}"
   },
@@ -23,7 +23,7 @@
         "scripts/virtualbox.sh",
         "scripts/vmware.sh",
         "scripts/vagrant.sh",
-        "scripts/puppet.sh",
+        "scripts/puppet4.sh",
         "scripts/grub.sh",
         "scripts/network.sh",
         "scripts/zerodisk.sh",
